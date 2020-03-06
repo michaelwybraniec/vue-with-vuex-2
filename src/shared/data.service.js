@@ -1,42 +1,61 @@
 import axios from "axios";
 import { API } from "./config";
 
-const getHeroes = async function (id) {
-  id = '644'
-  try {
-    const response = await axios.get(`${API.heroes.url}/${API.heroes.key}/${id}`);
-    let hero = parseItem(response, 200);
-    hero.fullName = `${hero.firstName} ${hero.lastName}`;
-    return hero;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
 const getHero = async function (id) {
-  console.log("getHeroAction", id)
-  try {
-    const response = await axios.get(`${API}/heroes/${id}`);
-    let hero = parseItem(response, 200);
-    hero.fullName = `${hero.firstName} ${hero.lastName}`;
-    return hero;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+  console.log("data.service, getHero id;", id)
+  id = '644'
+
+  //? AXIOS
+  await axios(
+    `${API.heroes.url}/${API.heroes.key}/${id}`,
+    //? Trying to bypass 'Access-Control-Allow-Origin' err
+    // {
+    //   method: "GET",
+    //   mode: "no-cors",
+    //   headers: {
+    //     "Access-Control-Allow-Origin": "*",
+    //     "Content-Type": "application/json",
+    //   },
+    //   withCredentials: true,
+    //   credentials: "same-origin",
+    // },
+  )
+    .then(function (response) {
+      let hero = this.sparseItem(response, 200);
+      hero.fullName = `${hero.firstName} ${hero.lastName}`;
+      return hero;
+    })
+    .catch(function (error) {
+      console.error(error);
+      return null;
+    });
+
+  //? FETCH
+  // const testURL = `${API.heroes.url}/${API.heroes.key}/${this.search.by.name}`;
+  // const myInit = {
+  //   method: "HEAD",
+  //   mode: "no-cors",
+  // };
+  // const myRequest = new Request(testURL, myInit);
+  // await fetch(myRequest)
+  //   .then(function(response) {
+  //     // let hero = this.sparseItem(response, 200);
+  //     //  hero.fullName = `${hero.firstName} ${hero.lastName}`;
+  //     //  return hero;
+  //     console.log(response);
+
+  //     return response;
+  //   })
+  //   .then(function(response) {
+  //     console.log(response);
+  //   })
+  //   .catch(function(err) {
+  //     console.error(err);
+  //     return null;
+  //   });
+
 };
 
-const updateHero = async function (hero) {
-  try {
-    const response = await axios.put(`${API}/heroes/${hero.id}`, hero);
-    const updatedHero = parseItem(response, 200);
-    return updatedHero;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
 
 // const parseList = response => {
 //   if (response.status !== 200) throw Error(response.message);
@@ -59,6 +78,4 @@ export const parseItem = (response, code) => {
 
 export const dataService = {
   getHero,
-  getHeroes,
-  updateHero
 };
