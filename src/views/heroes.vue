@@ -30,8 +30,20 @@
                 <p>{{ message }}</p>
               </div>
               <div v-if="!loading">
-              
-              {{hero}}
+              <hr>
+             <div v-if="hero">
+               <div v-for="(value, name, index) in hero" v-bind:key="index">
+                 <div v-if='index !== 0'>
+                 <b>{{ index }}. {{ name }}</b>: <span v-if="value.length">{{value}}</span>
+                  <div v-else>
+                    <div v-for="(value, name, index) in value" v-bind:key="index">
+                      <span> - <i> {{ name }} </i>: {{value}}</span>
+                    </div>
+                  </div>
+                 </div>
+                  <br>
+                </div>
+              </div>
 
               <HeroDetail
                 :hero="selectedHero"
