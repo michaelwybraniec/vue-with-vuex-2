@@ -1,14 +1,5 @@
 <template>
   <b-container>
-    <div
-      class="mt-4 mb-4 text-center"
-      v-show="message"
-      style="padding-top: 100px"
-    >
-      <b-spinner type="grow"></b-spinner>
-      <p>{{ message }}</p>
-    </div>
-    <div v-if="!message">
       <b-card-group deck>
         <b-card header="Heroes" class="shadow">
           <b-row>
@@ -24,15 +15,26 @@
                       class="mb-2 mr-sm-2 mb-sm-0"
                       placeholder="Name"
                       v-model="search.by.name"
-                      v-on:keyup.enter="findHero()"
+                      v-on:keyup.enter="getHero()"
                     ></b-input>
 
-                    <b-button variant="light" @click="findHero()"
+                    <b-button variant="light" @click="getHero()"
                       >Find</b-button
                     >
+                   
                   </b-form>
                 </div>
               </div>
+     <div
+      class="mt-4 mb-4 text-center"
+      v-show="message"
+      style="padding-top: 100px"
+    >
+      <b-spinner type="grow"></b-spinner>
+      <p>{{ message }}</p>
+    </div>
+<div v-if="!loading">
+               {{hero}}
 
               <HeroDetail
                 :hero="selectedHero"
@@ -40,24 +42,25 @@
                 @cancel="cancelHero"
                 v-if="selectedHero"
               />
+
+</div>
             </b-col>
           </b-row>
         </b-card>
       </b-card-group>
-    </div>
   </b-container>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
-import { dataService } from "../shared";
+//import { mapActions, mapGetters } from "vuex";
+import store from '@/store/index'
 import HeroDetail from "@/views/hero-detail";
 export default {
   name: "Heroes",
   data() {
     return {
+      loading: false,
       message: "",
-      hero: {},
       selectedHero: false,
       search: {
         by: {
@@ -70,27 +73,22 @@ export default {
   components: {
     HeroDetail,
   },
-  async mounted() {
-    //await this.loadHeroes();
+  computed: {
+    hero() {
+      return store.getters.getAvailableHero
+    },
   },
   methods: {
-    ...mapActions(["getHeroAction"]),
-    parseItem(response, code) {
-      if (response.status !== code) throw Error(response.message);
-      let item = response.data;
-      if (typeof item !== "object") {
-        item = undefined;
-      }
-      return item;
-    },
-    async findHero() {
+     async getHero() {
       this.message = "Getting the hero, please be patient!";
-      await dataService.getHero(this.search.by.name);
-      this.message = "";
+      this.loading = true;
+      await store.dispatch('getHeroAction', this.search.by.name)
+      .then(()=> {
+        this.loading = false
+         this.message = "";
+      })
+    
     },
-  },
-  computed: {
-    ...mapGetters(["getHeroById"]),
   },
 };
 </script>
