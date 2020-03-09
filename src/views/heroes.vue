@@ -25,16 +25,13 @@
                   </b-form>
                 </div>
               </div>
-     <div
-      class="mt-4 mb-4 text-center"
-      v-show="message"
-      style="padding-top: 100px"
-    >
-      <b-spinner type="grow"></b-spinner>
-      <p>{{ message }}</p>
-    </div>
-<div v-if="!loading">
-               {{hero}}
+              <div class="pt-4 pb-4 text-center" v-show="message">
+                <b-spinner type="grow"></b-spinner>
+                <p>{{ message }}</p>
+              </div>
+              <div v-if="!loading">
+              
+              {{hero}}
 
               <HeroDetail
                 :hero="selectedHero"
@@ -43,7 +40,8 @@
                 v-if="selectedHero"
               />
 
-</div>
+              </div>
+              
             </b-col>
           </b-row>
         </b-card>
