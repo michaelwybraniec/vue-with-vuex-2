@@ -7,9 +7,8 @@
               <div v-if="!selectedHero">
                 <div>
                   <b-form inline>
-                    <label class="sr-only" for="inline-form-input-name"
-                      >Search:</label
-                    >
+                    <label class="sr-only" for="inline-form-input-name">Search:</label>
+
                     <b-input
                       id="inline-form-input-name"
                       class="mb-2 mr-sm-2 mb-sm-0"
@@ -30,27 +29,29 @@
               </div>
 
               <div v-if="!loading">
+
                 <hr>
+
                 <div v-if="hero">
                   <div v-for="(value, name, index) in hero" v-bind:key="index">
                     <div v-if='index !== 0'>
                       <b>{{ index }}. {{ name }}</b>: <span v-if="value.length">{{value}}</span>
-                    <div v-else>
-                      <div v-for="(value, name, index) in value" v-bind:key="index">
-                        <span> - <i> {{ name }} </i>: {{value}}</span>
+                      <div v-else>
+                        <div v-for="(value, name, index) in value" v-bind:key="index">
+                          <span> - <i> {{ name }} </i>: {{value}}</span>
+                        </div>
                       </div>
                     </div>
+                    <br>
                   </div>
-                  <br>
                 </div>
-              </div>
-
-              <HeroDetail
-                :hero="selectedHero"
-                @save="saveHero"
-                @cancel="cancelHero"
-                v-if="selectedHero"
-              />
+<!-- 
+                <HeroDetail
+                  :hero="selectedHero"
+                  @save="saveHero"
+                  @cancel="cancelHero"
+                  v-if="selectedHero"
+                /> -->
 
               </div>
               
@@ -64,7 +65,7 @@
 <script>
 //import { mapActions, mapGetters } from "vuex";
 import store from '@/store/index'
-import HeroDetail from "@/views/hero-detail";
+// import HeroDetail from "@/views/hero-detail";
 export default {
   name: "Heroes",
   data() {
