@@ -82,7 +82,7 @@ export default {
     };
   },
   components: {
-    HeroDetail,
+   // HeroDetail,
   },
   computed: {
     hero() {
@@ -96,7 +96,7 @@ export default {
       await store.dispatch('getHeroAction', this.search.by.name)
       .then(()=> {
         this.loading = false
-         this.message = "";
+        this.message = "";
       })
     
     },
