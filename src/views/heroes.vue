@@ -18,29 +18,29 @@
                       v-on:keyup.enter="getHero()"
                     ></b-input>
 
-                    <b-button variant="light" @click="getHero()"
-                      >Find</b-button
-                    >
+                    <b-button variant="light" @click="getHero()">Find</b-button>
                    
                   </b-form>
                 </div>
               </div>
+
               <div class="pt-4 pb-4 text-center" v-show="message">
                 <b-spinner type="grow"></b-spinner>
                 <p>{{ message }}</p>
               </div>
+
               <div v-if="!loading">
-              <hr>
-             <div v-if="hero">
-               <div v-for="(value, name, index) in hero" v-bind:key="index">
-                 <div v-if='index !== 0'>
-                 <b>{{ index }}. {{ name }}</b>: <span v-if="value.length">{{value}}</span>
-                  <div v-else>
-                    <div v-for="(value, name, index) in value" v-bind:key="index">
-                      <span> - <i> {{ name }} </i>: {{value}}</span>
+                <hr>
+                <div v-if="hero">
+                  <div v-for="(value, name, index) in hero" v-bind:key="index">
+                    <div v-if='index !== 0'>
+                      <b>{{ index }}. {{ name }}</b>: <span v-if="value.length">{{value}}</span>
+                    <div v-else>
+                      <div v-for="(value, name, index) in value" v-bind:key="index">
+                        <span> - <i> {{ name }} </i>: {{value}}</span>
+                      </div>
                     </div>
                   </div>
-                 </div>
                   <br>
                 </div>
               </div>
