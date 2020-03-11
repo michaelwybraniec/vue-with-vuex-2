@@ -13,7 +13,7 @@
                       id="inline-form-input-name"
                       class="mb-2 mr-sm-2 mb-sm-0"
                       placeholder="Name"
-                      v-model="search.by.name"
+                      v-model="search.input"
                       v-on:keyup.enter="getHero()"
                     ></b-input>
 
@@ -45,7 +45,8 @@
                     <br>
                   </div>
                 </div>
-<!-- 
+                
+                <!-- 
                 <HeroDetail
                   :hero="selectedHero"
                   @save="saveHero"
@@ -74,9 +75,10 @@ export default {
       message: "",
       selectedHero: false,
       search: {
+        input: "",
         by: {
           name: "",
-          id: "",
+          id: 0,
         },
       },
     };
@@ -93,12 +95,9 @@ export default {
      async getHero() {
       this.message = "Getting the hero, please be patient!";
       this.loading = true;
-      await store.dispatch('getHeroAction', this.search.by.name)
-      .then(()=> {
-        this.loading = false
-        this.message = "";
-      })
-    
+      await store.dispatch('getHeroAction', this.search.input)
+      this.loading = false
+      this.message = "";
     },
   },
 };
