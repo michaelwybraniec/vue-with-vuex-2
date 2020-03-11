@@ -1,21 +1,22 @@
+//! This data service did not return the obj re.data to the vuex actions.
+//! Therefore store:actions:getHeroAction: calls api itself currently.
+
 import axios from "axios";
 import { API } from "./config";
-
 
 const getHero = async id => {
   const {herokuCors, url, key} = API.heroes;
   const request = `${herokuCors}/${url}/${key}/${id}`;
  await axios.get(request)
-    .then(response => {
-      console.log("data.service, response:", response.data)
-      return response.data
+    .then(res => {
+      console.log("data.service, response:", response)
+      return res.data
     })
-    .catch(error => {
-      console.error(error);
+    .catch(err => {
+      console.error(err);
       return null;
     })
 };
-
 
 export const dataService = {
   getHero,

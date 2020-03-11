@@ -7,38 +7,52 @@
               <div v-if="!selectedHero">
                 <div>
                   <b-form inline>
-                    <label class="sr-only" for="inline-form-input-name"
-                      >Search:</label
-                    >
+                    <label class="sr-only" for="inline-form-input-name">Search:</label>
+
                     <b-input
                       id="inline-form-input-name"
                       class="mb-2 mr-sm-2 mb-sm-0"
                       placeholder="Name"
-                      v-model="search.by.name"
+                      v-model="search.input"
                       v-on:keyup.enter="getHero()"
                     ></b-input>
 
-                    <b-button variant="light" @click="getHero()"
-                      >Find</b-button
-                    >
+                    <b-button variant="light" @click="getHero()">Find</b-button>
                    
                   </b-form>
                 </div>
               </div>
+
               <div class="pt-4 pb-4 text-center" v-show="message">
                 <b-spinner type="grow"></b-spinner>
                 <p>{{ message }}</p>
               </div>
-              <div v-if="!loading">
-              
-              {{hero}}
 
-              <HeroDetail
-                :hero="selectedHero"
-                @save="saveHero"
-                @cancel="cancelHero"
-                v-if="selectedHero"
-              />
+              <div v-if="!loading">
+
+                <hr>
+
+                <div v-if="hero">
+                  <div v-for="(value, name, index) in hero" v-bind:key="index">
+                    <div v-if='index !== 0'>
+                      <b>{{ index }}. {{ name }}</b>: <span v-if="value.length">{{value}}</span>
+                      <div v-else>
+                        <div v-for="(value, name, index) in value" v-bind:key="index">
+                          <span> - <i> {{ name }} </i>: {{value}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <br>
+                  </div>
+                </div>
+                
+                <!-- 
+                <HeroDetail
+                  :hero="selectedHero"
+                  @save="saveHero"
+                  @cancel="cancelHero"
+                  v-if="selectedHero"
+                /> -->
 
               </div>
               
@@ -52,7 +66,7 @@
 <script>
 //import { mapActions, mapGetters } from "vuex";
 import store from '@/store/index'
-import HeroDetail from "@/views/hero-detail";
+// import HeroDetail from "@/views/hero-detail";
 export default {
   name: "Heroes",
   data() {
@@ -61,15 +75,16 @@ export default {
       message: "",
       selectedHero: false,
       search: {
+        input: "",
         by: {
           name: "",
-          id: "",
+          id: 0,
         },
       },
     };
   },
   components: {
-    HeroDetail,
+   // HeroDetail,
   },
   computed: {
     hero() {
@@ -80,12 +95,9 @@ export default {
      async getHero() {
       this.message = "Getting the hero, please be patient!";
       this.loading = true;
-      await store.dispatch('getHeroAction', this.search.by.name)
-      .then(()=> {
-        this.loading = false
-         this.message = "";
-      })
-    
+      await store.dispatch('getHeroAction', this.search.input)
+      this.loading = false
+      this.message = "";
     },
   },
 };
