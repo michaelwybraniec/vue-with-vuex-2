@@ -137,7 +137,13 @@ export default {
    },
    apiError(errNew, errOld) {
      console.log("apiErro_____", errNew, errOld)
- if(errNew === "access denied") this.message.error = "Api access denied, try later pls !";
+     if(errNew === "access denied") {
+       this.message.error = "Api access denied, try later pls !";
+     }
+     else if(errNew === "character with given name not found") {
+       //! err is falling to the 2nd test on the action level, refactor function.
+       this.message.error = "Character not found :-("
+     }
    }
   },
   computed: {
