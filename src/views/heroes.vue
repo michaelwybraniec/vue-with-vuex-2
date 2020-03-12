@@ -31,7 +31,7 @@
                        </div>
                     </b-button>
 
-                    <fade-transition v-if="buttons.clear.show">
+                    <div v-if="buttons.clear.show && !this.message.error && !this.loading">
                       <b-button 
                         variant="light" 
                         @click="clearHero()"
@@ -39,19 +39,18 @@
                         >
                         Clear
                       </b-button>
-                    </fade-transition>
-                    
-                   <fade-transition v-if="this.message.error" >
+                    </div>
+
+                   <div v-if="this.message.error" >
                     <b-alert 
-                    show
-                     
+                      show
                       variant="danger"
                       style="padding: 6px; margin: 0px;" 
                       class="ml-2 pl-3 pr-3"
                       >
                       {{this.message.error}}
                     </b-alert>
-                  </fade-transition>
+                  </div>
                    
                   </b-form>
                 </div>
@@ -131,20 +130,23 @@ export default {
    // HeroDetail,
   },
   watch: {
-   disableSearch () {
-     if(this.search.input === "") this.buttons.search.disabled = true;
-     else this.buttons.search.disabled = false;
-   },
-   apiError(errNew, errOld) {
-     console.log("apiErro_____", errNew, errOld)
-     if(errNew === "access denied") {
-       this.message.error = "Api access denied, try later pls !";
-     }
-     else if(errNew === "character with given name not found") {
-       //! err is falling to the 2nd test on the action level, refactor function.
-       this.message.error = "Character not found :-("
-     }
-   }
+    disableSearch () {
+      if(this.search.input === "") this.buttons.search.disabled = true;
+      else this.buttons.search.disabled = false;
+    },
+    apiError(errNew, errOld) {
+      console.log("apiError -> errNew, errOld", errNew, errOld)
+      switch(errNew){
+        case "access denied":
+          this.message.error =  "Api access denied, try later pls !";
+          break;
+        case "character with given name not found":
+          // err is falling to the 2nd test on the action level, refactor function.
+          this.message.error = "Hero with a given name not found :-(";
+          break;
+        default: this.message.error = errNew;
+      }
+    }
   },
   computed: {
     disableSearch() {
@@ -154,7 +156,6 @@ export default {
       return store.getters.getAvailableHero
     },
     apiError() { 
-      console.log(" falling into computed apiErrorMsg", store.getters.getApiErrorMsg)
       return store.getters.getApiErrorMsg
     }
   },
@@ -169,10 +170,12 @@ export default {
         this.loading = false;
         this.buttons.search.disabled = false;
         this.buttons.clear.show = true;
+        this.hero ? this.message.error = undefined : null
+
       }
       else {
         this.message.error = "Input empty, I can't read minds yet!"
-        this.disabled = true;
+       
       }
     },
     clearHero(){

@@ -17,14 +17,10 @@ const state = () => ({
 });
 
 const mutations = {
- [GET_HERO] (state, hero) { 
-   state.hero = hero; 
-  },
-  [CLEAR_HERO] (state, hero){
-    state.hero = hero;
-  },
+  [GET_HERO] (state, hero) { state.hero = hero; },
+  [CLEAR_HERO] (state, hero) { state.hero = hero; },
   [API_ERROR] (state, error){
-    console.log(state, error)
+  console.log("state, error", state, error)
     state.api_error = error;
   }
 };
@@ -40,8 +36,11 @@ const actions = {
 
       if(!heroById.data.error) {
         if(heroById.data.response === "error") {
+          console.log("getHeroAction -> heroById.data", heroById.data)
           context.commit(API_ERROR, heroById.data.error)
+         context.commit(CLEAR_HERO, undefined)
         } else {
+          context.commit(API_ERROR, undefined)
           context.commit(GET_HERO, heroById.data)
         }
       } 
@@ -49,18 +48,24 @@ const actions = {
       else if(heroById.data.error) {
         const heroByName = await axios.get(reqByNameUrl)
         if(heroByName.data.response === "error") {
+          console.log("getHeroAction -> heroByName.data", heroByName.data)
           context.commit(API_ERROR, heroByName.data.error)
+          context.commit(CLEAR_HERO, undefined)
         } else {
+          context.commit(API_ERROR, undefined)
           context.commit(GET_HERO, heroByName.data.results)
         }
       } 
 
       else {
-        context.commit(GET_HERO, {error: "Nothing found"})
+        context.commit(CLEAR_HERO, undefined)
+        context.commit(API_ERROR, "getHeroAction else case error")
       }
     }
     catch(err) {
-      console.error(err)
+    console.log("getHeroAction -> err", err)
+    context.commit(CLEAR_HERO, undefined)
+    context.commit(API_ERROR, err)
     }
   },
   clearHeroAction(context){
