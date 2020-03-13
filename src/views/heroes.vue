@@ -8,9 +8,7 @@
               <div>
                 <b-row class="mb-2">
                   <b-col sm="6" class="pr-2">
-                    <label class="sr-only" for="inline-form-input-name"
-                      >Search:</label
-                    >
+                    <label class="sr-only" for="inline-form-input-name">Search:</label>
                     <b-input
                       id="inline-form-input-name"
                       class="mb-20"
@@ -21,77 +19,55 @@
                   </b-col>
 
                   <b-col sm="6" class="pl-2">
-                    <div>
-                      <span v-if="!this.message.error">
-                        <b-button
-                          variant="light"
-                          class="border"
-                          @click="getHero()"
-                          :disabled="this.buttons.search.disabled"
-                        >
-                          <span v-if="!loading">
-                            Search
-                          </span>
-                          <div v-else>
-                            <b-spinner small type="grow"></b-spinner>
-                            {{ this.message.info }}
-                          </div>
-                        </b-button>
-                      </span>
+                    <!-- <div> -->
 
-                      <span
-                        v-if="
+                    <span v-if="!this.message.error">
+                      <b-button
+                        variant="light"
+                        class="border"
+                        @click="getHero()"
+                        :disabled="this.buttons.search.disabled"
+                      >
+                        <span v-if="!loading">Search</span>
+                        <div v-else>
+                          <b-spinner small type="grow"></b-spinner>
+                          {{ this.message.info }}
+                        </div>
+                      </b-button>
+                    </span>
+
+                    <span
+                      v-if="
                           buttons.clear.show &&
                             !this.message.error &&
                             !this.loading
                         "
-                      >
-                        <b-button
-                          variant="light"
-                          @click="clearHero()"
-                          class="ml-2 border"
-                        >
-                          Clear
-                        </b-button>
-                      </span>
+                    >
+                      <b-button variant="light" @click="clearHero()" class="ml-2 border">Clear</b-button>
+                    </span>
 
-                      <div v-if="this.message.error">
-                        <b-alert
-                          show
-                          variant="danger"
-                          style="padding: 6px; margin: 0px;"
-                          class="text-center"
-                        >
-                          {{ this.message.error }}
-                        </b-alert>
-                      </div>
+                    <div v-if="this.message.error">
+                      <b-alert
+                        show
+                        variant="danger"
+                        style="padding: 6px; margin: 0px;"
+                        class="text-center"
+                      >{{ this.message.error }}</b-alert>
                     </div>
+
+                    <!-- </div> -->
                   </b-col>
                 </b-row>
               </div>
             </div>
-
+            Selected: {{this.selectedHero && this.selectedHero.name}}
             <div v-if="!loading">
               <b-list-group v-if="hero">
                 <div v-if="hero.response !== 'success'">
-                  <div v-for="(value, name, index) in hero" v-bind:key="index">
-                    <b-list-group-item
-                      button
-                      class=""
-                      @click="selectHero(index)"
-                    >
-                      <span v-if="value.length">{{ value }}</span>
-                      <div v-else>
-                        <div
-                          v-for="(value, name, index) in value"
-                          v-bind:key="index"
-                        >
-                          <span>
-                            - <i> {{ name }} </i>: {{ value }}</span
-                          >
-                        </div>
-                      </div>
-                      <br />
+                  <div v-for="(value, index) in hero" v-bind:key="index">
+                    <b-list-group-item button class="mb-2" @click="selectHero(hero[index])">
+                      <!-- {{hero[index]}} -->
+                      {{value.name}}
                     </b-list-group-item>
                   </div>
                 </div>
@@ -100,18 +76,16 @@
                     button
                     class="shadow-sm mt-1"
                     @click="selectHero(hero)"
-                  >
-                    {{ hero.name }}
-
-                    <HeroDetail
-                      :hero="selectedHero"
-                      @save="saveHero"
-                      @cancel="cancelHero"
-                      v-if="selectedHero"
-                    />
-                  </b-list-group-item>
+                  >{{ hero.name }}</b-list-group-item>
                 </div>
               </b-list-group>
+
+              <HeroDetail
+                :hero="selectedHero"
+                @save="saveHero"
+                @cancel="cancelHero"
+                v-if="selectedHero"
+              />
             </div>
           </b-col>
         </b-row>
@@ -121,7 +95,6 @@
 </template>
 
 <script>
-//import { mapActions, mapGetters } from "vuex";
 import store from '@/store/index'
 import HeroDetail from '@/views/hero-detail'
 export default {
@@ -199,6 +172,7 @@ export default {
         this.buttons.search.disabled = false
         this.buttons.clear.show = true
         this.hero ? (this.message.error = undefined) : null
+        this.selectedHero = undefined
       } else {
         this.message.error = "Input empty, I can't read minds yet!"
       }
@@ -210,9 +184,18 @@ export default {
       this.search.input = undefined
       this.selectedHero = undefined
     },
-    selectHero(hero) {
-      console.log('selectHero -> hero', hero)
-      this.selectedHero = hero
+    selectHero(selectedHero) {
+      console.log('selectHero -> hero', selectedHero.name)
+      this.selectedHero = selectedHero
+    },
+    cancelHero() {
+      this.selectedHero = !this.selectedHero
+    },
+    saveHero(hero) {
+      const index = this.hero.findIndex(h => h.id === hero.id)
+      this.hero.splice(index, 1, hero)
+      this.hero = [...this.hero]
+      this.selectedHero = undefined
     }
   }
 }
