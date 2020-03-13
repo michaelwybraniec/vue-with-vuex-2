@@ -26,7 +26,7 @@
                         variant="light"
                         class="border"
                         @click="getHero()"
-                        :disabled="this.buttons.search.disabled"
+                        :disabled="!search.input || loading"
                       >
                         <span v-if="!loading">Search</span>
                         <div v-else>
@@ -40,7 +40,8 @@
                       v-if="
                           buttons.clear.show &&
                             !this.message.error &&
-                            !this.loading
+                            !this.loading &&
+                            search.input
                         "
                     >
                       <b-button variant="light" @click="clearHero()" class="ml-2 border">Clear</b-button>
@@ -125,15 +126,15 @@ export default {
     HeroDetail
   },
   watch: {
-    disableSearch() {
-      if (this.search.input === '') {
-        this.buttons.search.disabled = true
-        this.buttons.clear.show = false
-        this.message.error = undefined
-      } else {
-        this.buttons.search.disabled = false
-      }
-    },
+    // disableSearch() {
+    //   if (this.search.input === '') {
+    //     this.buttons.search.disabled = true
+    //     this.buttons.clear.show = false
+    //     this.message.error = undefined
+    //   } else {
+    //     this.buttons.search.disabled = false
+    //   }
+    // },
     apiError(errNew, errOld) {
       console.log('apiError -> errNew, errOld', errNew, errOld)
       switch (errNew) {
@@ -150,9 +151,9 @@ export default {
     }
   },
   computed: {
-    disableSearch() {
-      return this.search.input
-    },
+    // disableSearch() {
+    //   return this.search.input
+    // },
     hero() {
       return store.getters.getAvailableHero
     },
