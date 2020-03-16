@@ -1,7 +1,7 @@
 <template>
-  <b-container>
-    <b-card-group deck class="pt-4">
-      <b-card header="Heroes" class="shadow">
+  <b-container class="p-2 mt-4">
+    <b-card-group deck class>
+      <b-card class="shadow" header="Heroes">
         <b-row>
           <b-col>
             <div>
@@ -61,14 +61,14 @@
                 </b-row>
               </div>
             </div>
-            Selected: {{this.selectedHero && this.selectedHero.name}}
+
             <div v-if="!loading">
-              <b-list-group v-if="hero">
+              <b-list-group v-if="!selectedHero">
                 <div v-if="hero.response !== 'success'">
                   <div v-for="(value, index) in hero" v-bind:key="index">
                     <b-list-group-item button class="mb-2" @click="selectHero(hero[index])">
                       <!-- {{hero[index]}} -->
-                      {{value.name}}
+                      <b class>{{value.name}}</b>
                     </b-list-group-item>
                   </div>
                 </div>
@@ -190,7 +190,7 @@ export default {
       this.selectedHero = selectedHero
     },
     cancelHero() {
-      this.selectedHero = !this.selectedHero
+      this.selectedHero = undefined
     },
     saveHero(hero) {
       const index = this.hero.findIndex(h => h.id === hero.id)
