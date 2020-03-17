@@ -70,7 +70,6 @@
               </div>
             </div>
 
-            TEST
             <div v-if="!loading">
               <b-list-group v-if="!selectedHero">
                 <div v-if="hero.response !== 'success'">
