@@ -49,48 +49,61 @@
           </b-row>
         </div>
 
-        <div v-for="(value, name, index) in clonedHero" v-bind:key="index + name" class>
-          <b-row v-if="index !== 0" class="border-bottom mt-2 pb-2">
-            <b-col md="2">
-              <label for="{name}">
-                <b>{{ name }}:</b>
-              </label>
+      <div v-if="this.details" class="mt-4 p-0">
+        <div
+          v-for="(value, name, index) in clonedHero"
+          v-bind:key="index + name"
+        >
+          <b-row
+            v-if="
+              index !== 0 &&
+                name !== 'name' &&
+                name !== 'id' &&
+                name !== 'image'
+            "
+            class="m-1 border"
+          >
+            <b-col sm="2">
+              <b>{{ name }}:</b>
             </b-col>
-            <b-col md="10">
-              <span v-if="typeof value === 'string'" class="border-left pl-3">{{ value }}</span>
-              <span v-else>
-                <div
-                  v-for="(value, name, index) in value"
-                  v-bind:key="index + name"
-                  class="border-left pl-3"
-                >
-                  <b-row>
-                    <b-col md="3">
-                      <b>{{ name }}:</b>
-                    </b-col>
-                    <b-col md="9">
-                      <div
-                        v-if="
-                          typeof value === 'string' || typeof value === 'number'
-                        "
-                        class="border-left pl-3"
-                      >{{ value }}</div>
-                      <span v-else>
-                        <div
-                          v-for="(value, name, index) in value"
-                          v-bind:key="index + value"
-                          class="border-left pl-3"
-                        >
-                          <span v-if="typeof value === 'string'">{{ value }}</span>
-                        </div>
+
+            <b-col>
+              <b-row
+                v-for="(value, name, index) in value"
+                v-bind:key="index + name"
+                class="border-left"
+              >
+                <b-col md="3">
+                  <b>{{ name }}:</b>
+                </b-col>
+
+                <b-col>
+                  <div
+                    v-if="
+                      typeof value === 'string' || typeof value === 'number'
+                    "
+                    class="border-left pl-3 row"
+                  >
+                    {{ value }}
+                  </div>
+
+                  <div v-else>
+                    <b-row
+                      v-for="(value, name, index) in value"
+                      v-bind:key="index + value"
+                      class="border-left pl-3"
+                    >
+                      <span v-if="typeof value === 'string'">
+                        {{ value }}
                       </span>
-                    </b-col>
-                  </b-row>
-                </div>
-              </span>
+                    </b-row>
+                  </div>
+                </b-col>
+              </b-row>
             </b-col>
           </b-row>
         </div>
+      </div>
 
         <div class="float-right mt-4">
           <b-button class="mr-2 border" variant="light" @click="cancelHero()">Cancel</b-button>
