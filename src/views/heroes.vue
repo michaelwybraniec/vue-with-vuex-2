@@ -8,7 +8,9 @@
               <div>
                 <b-row class="mb-2">
                   <b-col sm="6" class="pr-2">
-                    <label class="sr-only" for="inline-form-input-name">Search:</label>
+                    <label class="sr-only" for="inline-form-input-name"
+                      >Search:</label
+                    >
                     <b-input
                       id="inline-form-input-name"
                       class="mb-20"
@@ -38,13 +40,18 @@
 
                     <span
                       v-if="
-                          buttons.clear.show &&
-                            !this.message.error &&
-                            !this.loading &&
-                            search.input
-                        "
+                        buttons.clear.show &&
+                          !this.message.error &&
+                          !this.loading &&
+                          search.input
+                      "
                     >
-                      <b-button variant="light" @click="clearHero()" class="ml-2 border">Clear</b-button>
+                      <b-button
+                        variant="light"
+                        @click="clearHero()"
+                        class="ml-2 border"
+                        >Clear</b-button
+                      >
                     </span>
 
                     <div v-if="this.message.error">
@@ -53,7 +60,8 @@
                         variant="danger"
                         style="padding: 6px; margin: 0px;"
                         class="text-center"
-                      >{{ this.message.error }}</b-alert>
+                        >{{ this.message.error }}</b-alert
+                      >
                     </div>
 
                     <!-- </div> -->
@@ -66,18 +74,23 @@
               <b-list-group v-if="!selectedHero">
                 <div v-if="hero.response !== 'success'">
                   <div v-for="(value, index) in hero" v-bind:key="index">
-                    <b-list-group-item button class="mb-2" @click="selectHero(hero[index])">
+                    <b-list-group-item
+                      button
+                      class="mb-2"
+                      @click="selectHero(hero[index])"
+                    >
                       <!-- {{hero[index]}} -->
-                      <b class>{{value.name}}</b>
+                      <b class>{{ value.name }}</b>
                     </b-list-group-item>
                   </div>
                 </div>
                 <div v-else>
                   <b-list-group-item
                     button
-                    class="shadow-sm mt-1"
+                    class=" mt-1"
                     @click="selectHero(hero)"
-                  >{{ hero.name }}</b-list-group-item>
+                    >{{ hero.name }}</b-list-group-item
+                  >
                 </div>
               </b-list-group>
 
