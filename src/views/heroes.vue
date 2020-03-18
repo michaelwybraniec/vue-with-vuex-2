@@ -139,7 +139,7 @@ export default {
         input: undefined
       },
       favorites: {
-        data: undefined,
+        data: [],
         length: 0
       }
     }
@@ -148,12 +148,11 @@ export default {
     HeroDetail
   },
   watch: {
-    favoriteHeroes(newFav, oldFav) {
-      console.log('disableSearch', newFav, oldFav)
-      this.favourites.data = newFav
+    favoriteHeroes(newFav) {
+      this.favorites.data = newFav
+      this.favorites.length = newFav.length
     },
-    apiError(errNew, errOld) {
-      console.log('apiError -> errNew, errOld', errNew, errOld)
+    apiError(errNew) {
       switch (errNew) {
         case 'access denied':
           this.message.error = 'Api access denied, try later pls !'
@@ -203,7 +202,9 @@ export default {
       this.selectedHero = undefined
     },
     selectHero(selectedHero) {
-      console.log('selectHero -> hero', selectedHero.name)
+      const likedHero = this.favorites.data.find(h => h.id === selectedHero.id)
+      if (likedHero) selectedHero.liked = true
+      else selectedHero.liked = false
       this.selectedHero = selectedHero
     },
     cancelHero() {

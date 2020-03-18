@@ -15,38 +15,29 @@
           </div>
 
           <b-button
-            class="float-right border btn-sm"
+            class="float-right  btn-sm"
             variant="light"
             @click="cancelHero()"
           >
             <b-icon icon="arrow-left-short" font-scale="2"></b-icon>
           </b-button>
 
-          <b-row class="my-1">
+          <b-row class="">
             <b-col sm="12" class="pb-2">
               Id: <code>{{ clonedHero.id }}</code>
 
               <b-button
-                variant="light"
-                class="btn-sm border ml-2"
+                :variant="this.edit ? 'success' : 'light'"
+                class="btn ml-2"
                 @click="onEdit()"
               >
                 <div v-if="!this.edit">Edit</div>
                 <div v-if="this.edit">Save</div>
               </b-button>
 
-              <!-- <b-button
-                  v-if="!this.edit"
-                  variant="light"
-                  class="btn-sm border ml-2"
-                  @click="onSave()"
-                >
-                  <div v-if="!this.edit">Submit</div>
-                </b-button> -->
-
               <b-button
-                variant="light"
-                class="btn-sm border ml-2"
+                :variant="this.details ? 'success' : 'light'"
+                class="btn ml-2"
                 @click="onDetails()"
               >
                 <div v-if="!this.details">More details</div>
@@ -55,12 +46,12 @@
 
               <b-button
                 v-if="this.clonedHero"
-                variant="light"
-                class="btn-sm border ml-2"
+                :variant="this.favorite.color"
+                class="btn ml-2"
                 @click="onAddToFavorites()"
               >
-                <div v-if="!this.favorite">Add to favorites</div>
-                <div v-if="this.favorite">Added to favourites</div>
+                <div v-if="!this.favorite.status">Add to favorites</div>
+                <div v-if="this.favorite.status">Added to favourites</div>
               </b-button>
             </b-col>
             <b-col>
@@ -129,7 +120,7 @@
         </b-col>
       </b-row>
 
-      <div v-if="this.details" class="mt-4 p-0">
+      <div v-if="this.details" class="mt-3  m-0 p-0">
         <div
           v-for="(value, name, index) in clonedHero"
           v-bind:key="index + name"
@@ -139,9 +130,10 @@
               index !== 0 &&
                 name !== 'name' &&
                 name !== 'id' &&
-                name !== 'image'
+                name !== 'image' &&
+                name !== 'liked'
             "
-            class="m-1 border"
+            class="mt-4"
           >
             <b-col sm="2">
               <b>{{ name }}:</b>
@@ -151,7 +143,7 @@
               <b-row
                 v-for="(value, name, index) in value"
                 v-bind:key="index + name"
-                class="border-left"
+                class="mb-2 border-bottom mr-1"
               >
                 <b-col md="3">
                   <b>{{ name }}:</b>
@@ -162,7 +154,7 @@
                     v-if="
                       typeof value === 'string' || typeof value === 'number'
                     "
-                    class="border-left pl-3 row"
+                    class="pl-3 mr-1 row"
                   >
                     {{ value }}
                   </div>
@@ -171,7 +163,7 @@
                     <b-row
                       v-for="(value, name, index) in value"
                       v-bind:key="index + value"
-                      class="border-left pl-3"
+                      class=" pl-3 mr-1"
                     >
                       <span v-if="typeof value === 'string'">
                         {{ value }}
@@ -186,12 +178,10 @@
       </div>
 
       <div class="float-right mt-4">
-        <b-button class="mr-2 border" variant="light" @click="cancelHero()"
+        <b-button class="mr-2" variant="light" @click="cancelHero()"
           >Cancel</b-button
         >
-        <b-button class="border" variant="light" @click="saveHero()"
-          >Submit</b-button
-        >
+        <b-button class="" variant="light" @click="saveHero()">Submit</b-button>
       </div>
     </div>
   </b-card>
@@ -214,7 +204,10 @@ export default {
   data() {
     return {
       clonedHero: {},
-      favorite: false,
+      favorite: {
+        status: false,
+        color: undefined
+      },
       edit: false,
       details: false,
       message: '',
@@ -243,7 +236,9 @@ export default {
   methods: {
     async cloneHero() {
       this.clonedHero = { ...this.hero }
-      console.log('cloneHero -> this.hero', this.hero)
+      this.favorite.status = this.clonedHero.liked
+      if (this.clonedHero.liked) this.favorite.color = 'success'
+      else this.favorite.color = 'light'
     },
     async loadPicture() {
       this.message = 'Loading photo...'
@@ -254,13 +249,13 @@ export default {
       } else this.message = 'Picture unavailable ;-)'
     },
     onAddToFavorites() {
-      this.favorite = !this.favorite
-      if (this.favorite)
-        store.dispatch('addFavoriteHero', {
-          id: this.clonedHero.id,
-          name: this.clonedHero.name
-        })
-      else console.log(this.favorite)
+      this.favorite.status = !this.favorite.status
+      if (this.favorite.status) this.favorite.color = 'success'
+      else this.favorite.color = 'light'
+      store.dispatch('addFavoriteHero', {
+        id: this.clonedHero.id,
+        name: this.clonedHero.name
+      })
     },
     onEdit() {
       this.edit = !this.edit

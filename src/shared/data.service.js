@@ -5,11 +5,11 @@ import axios from "axios";
 import { API } from "./config";
 
 const getHero = async id => {
-  const {herokuCors, url, key} = API.heroes;
+  const { herokuCors, url, key } = API.heroes;
   const request = `${herokuCors}/${url}/${key}/${id}`;
- await axios.get(request)
+  await axios.get(request)
     .then(res => {
-      console.log("data.service, response:", response)
+      console.log("data.service, response:", res)
       return res.data
     })
     .catch(err => {
