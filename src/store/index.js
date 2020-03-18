@@ -14,7 +14,8 @@ Vue.use(Vuex)
 const state = () => ({
   hero: [],
   //heroes: [],
-  api_error: undefined
+  api_error: undefined,
+  favorite_heroes: undefined
 })
 
 const mutations = {
@@ -31,7 +32,7 @@ const mutations = {
   },
   [ADD_FAVORITE_HERO] (state, favoriteHero) {
     console.log('state, favoriteHero', state, favoriteHero)
-    state.favorite_hero = favoriteHero
+    state.favorite_heroes = favoriteHero
   }
 }
 
@@ -75,12 +76,19 @@ const actions = {
   },
   clearHeroAction (context) {
     context.commit(CLEAR_HERO, undefined)
+  },
+  addFavoriteHero (context, heroId) {
+    const hero = state => heroId => state.favorite_heroes.find(h => h.id === heroId)
+    // const favoriteHeroes = [...state.favorite_heroes]
+    console.log(hero)
+    context.commit(ADD_FAVORITE_HERO, heroId)
+    console.log("addFavoriteHero", heroId)
   }
 }
 
 const getters = {
   // parameterized getters are not cached. so this is just a convenience to get the state.
-  //getAvailableHero: state => id => state.heroes.find(h => h.id === id)
+  getAFavoriteHeroes: state => id => state.heroes.find(h => h.id === id),
   getAvailableHero: state => state.hero,
   getApiErrorMsg: state => state.api_error,
   getFavoriteHeroes: state => state.favorite_heroes
