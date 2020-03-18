@@ -1,5 +1,10 @@
 <template>
   <b-container class="p-2 mt-4">
+    <b-row class="pb-2 float-right">
+      <b-col>
+        <b-button> My favorite heroes: {{ favorites.length }} </b-button>
+      </b-col>
+    </b-row>
     <b-card-group deck class>
       <b-card class="shadow" header="Heroes">
         <b-row>
@@ -8,7 +13,9 @@
               <div>
                 <b-row class="mb-2">
                   <b-col sm="6" class="pr-2">
-                    <label class="sr-only" for="inline-form-input-name">Search:</label>
+                    <label class="sr-only" for="inline-form-input-name"
+                      >Search:</label
+                    >
                     <b-input
                       id="inline-form-input-name"
                       class="mb-20"
@@ -38,13 +45,18 @@
 
                     <span
                       v-if="
-                          buttons.clear.show &&
-                            !this.message.error &&
-                            !this.loading &&
-                            search.input
-                        "
+                        buttons.clear.show &&
+                          !this.message.error &&
+                          !this.loading &&
+                          search.input
+                      "
                     >
-                      <b-button variant="light" @click="clearHero()" class="ml-2 border">Clear</b-button>
+                      <b-button
+                        variant="light"
+                        @click="clearHero()"
+                        class="ml-2 border"
+                        >Clear</b-button
+                      >
                     </span>
 
                     <div v-if="this.message.error">
@@ -53,7 +65,8 @@
                         variant="danger"
                         style="padding: 6px; margin: 0px;"
                         class="text-center"
-                      >{{ this.message.error }}</b-alert>
+                        >{{ this.message.error }}</b-alert
+                      >
                     </div>
 
                     <!-- </div> -->
@@ -66,9 +79,13 @@
               <b-list-group v-if="!selectedHero">
                 <div v-if="hero.response !== 'success'">
                   <div v-for="(value, index) in hero" v-bind:key="index">
-                    <b-list-group-item button class="mb-2" @click="selectHero(hero[index])">
+                    <b-list-group-item
+                      button
+                      class="mb-2"
+                      @click="selectHero(hero[index])"
+                    >
                       <!-- {{hero[index]}} -->
-                      <b class>{{value.name}}</b>
+                      <b class>{{ value.name }}</b>
                     </b-list-group-item>
                   </div>
                 </div>
@@ -77,7 +94,8 @@
                     button
                     class="shadow-sm mt-1"
                     @click="selectHero(hero)"
-                  >{{ hero.name }}</b-list-group-item>
+                    >{{ hero.name }}</b-list-group-item
+                  >
                 </div>
               </b-list-group>
 
@@ -119,6 +137,10 @@ export default {
       },
       search: {
         input: undefined
+      },
+      favorites: {
+        data: undefined,
+        length: 0
       }
     }
   },
@@ -126,15 +148,10 @@ export default {
     HeroDetail
   },
   watch: {
-    // disableSearch() {
-    //   if (this.search.input === '') {
-    //     this.buttons.search.disabled = true
-    //     this.buttons.clear.show = false
-    //     this.message.error = undefined
-    //   } else {
-    //     this.buttons.search.disabled = false
-    //   }
-    // },
+    favoriteHeroes(newFav, oldFav) {
+      console.log('disableSearch', newFav, oldFav)
+      this.favourites.data = newFav
+    },
     apiError(errNew, errOld) {
       console.log('apiError -> errNew, errOld', errNew, errOld)
       switch (errNew) {
@@ -151,9 +168,9 @@ export default {
     }
   },
   computed: {
-    // disableSearch() {
-    //   return this.search.input
-    // },
+    favoriteHeroes() {
+      return store.getters.getFavoriteHeroes
+    },
     hero() {
       return store.getters.getAvailableHero
     },

@@ -3,7 +3,7 @@ import 'es6-promise/auto'
 import Vuex from 'vuex'
 import axios from 'axios'
 import { API } from '../shared/config'
-import { ADD_HERO, CLEAR_HERO, API_ERROR } from './mutation-types'
+import { ADD_HERO, CLEAR_HERO, API_ERROR, ADD_FAVORITE_HERO } from './mutation-types'
 
 //? This data service did not return the obj re.data to the vuex actions.
 //? Therefore store:actions:getHeroAction: calls api itself currently.
@@ -18,21 +18,25 @@ const state = () => ({
 })
 
 const mutations = {
-  [ADD_HERO](state, hero) {
+  [ADD_HERO] (state, hero) {
     //state.heroes.unshift(hero) //? mutable addition
     state.hero = hero
   },
-  [CLEAR_HERO](state, hero) {
+  [CLEAR_HERO] (state, hero) {
     state.hero = hero
   },
-  [API_ERROR](state, error) {
+  [API_ERROR] (state, error) {
     console.log('state, error', state, error)
     state.api_error = error
+  },
+  [ADD_FAVORITE_HERO] (state, favoriteHero) {
+    console.log('state, favoriteHero', state, favoriteHero)
+    state.favorite_hero = favoriteHero
   }
 }
 
 const actions = {
-  async getHeroAction(context, input) {
+  async getHeroAction (context, input) {
     const { herokuCors, url, key } = API.heroes
     const reqByNameUrl = `${herokuCors}/${url}/${key}/search/${input}`
     const reqByIdUrl = `${herokuCors}/${url}/${key}/${input}`
@@ -69,7 +73,7 @@ const actions = {
       context.commit(API_ERROR, err)
     }
   },
-  clearHeroAction(context) {
+  clearHeroAction (context) {
     context.commit(CLEAR_HERO, undefined)
   }
 }
@@ -78,7 +82,8 @@ const getters = {
   // parameterized getters are not cached. so this is just a convenience to get the state.
   //getAvailableHero: state => id => state.heroes.find(h => h.id === id)
   getAvailableHero: state => state.hero,
-  getApiErrorMsg: state => state.api_error
+  getApiErrorMsg: state => state.api_error,
+  getFavoriteHeroes: state => state.favorite_heroes
 }
 
 export default new Vuex.Store({
