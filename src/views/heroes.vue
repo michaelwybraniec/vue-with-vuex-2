@@ -1,10 +1,5 @@
 <template>
-  <b-container class="p-2 mt-4">
-    <b-row class="pb-2 float-right">
-      <b-col>
-        <b-button> My favorite heroes: {{ favorites.length }} </b-button>
-      </b-col>
-    </b-row>
+  <b-container>
     <b-card-group deck class>
       <b-card class="shadow" header="Heroes">
         <b-row>
@@ -26,8 +21,6 @@
                   </b-col>
 
                   <b-col sm="6" class="pl-2">
-                    <!-- <div> -->
-
                     <span v-if="!this.message.error">
                       <b-button
                         variant="light"
@@ -68,8 +61,6 @@
                         >{{ this.message.error }}</b-alert
                       >
                     </div>
-
-                    <!-- </div> -->
                   </b-col>
                 </b-row>
               </div>
@@ -80,17 +71,21 @@
                 <div v-if="hero.response !== 'success'">
                   <div v-for="(value, index) in hero" v-bind:key="index">
                     <b-list-group-item
+                      :variant="hero[index].liked && 'success'"
                       button
                       class="mb-2"
                       @click="selectHero(hero[index])"
                     >
-                      <!-- {{hero[index]}} -->
                       <b class>{{ value.name }}</b>
+                      <!-- <span v-if="hero[index].liked">
+                        Liked: {{ hero[index].liked }}
+                      </span> -->
                     </b-list-group-item>
                   </div>
                 </div>
                 <div v-else>
                   <b-list-group-item
+                    :variant="hero.liked && 'success'"
                     button
                     class="shadow-sm mt-1"
                     @click="selectHero(hero)"

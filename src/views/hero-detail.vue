@@ -253,8 +253,9 @@ export default {
       if (this.favorite.status) this.favorite.color = 'success'
       else this.favorite.color = 'light'
       store.dispatch('addFavoriteHero', {
-        id: this.clonedHero.id,
-        name: this.clonedHero.name
+        ...this.clonedHero
+        // id: this.clonedHero.id,
+        // name: this.clonedHero.name
       })
     },
     onEdit() {
