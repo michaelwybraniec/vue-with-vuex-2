@@ -1,55 +1,126 @@
 <template>
-  <b-card class="mt-2 mb-2 m-0">
-    <b-row>
-      <b-col>
-        <b-row class="my-1 mb-2 text-center">
-          <b-col>
-            <b-button class="float-right" variant="light" @click="saveHero()">
-              <b-icon icon="arrow-left-short" font-scale="2"></b-icon>
-            </b-button>
-            <div style="height: 280px">
-              <div
-                class="text-center"
-                style="padding-top: 40px;"
-                v-if="!picLoaded"
-                v-show="message"
+  <b-card class="m-0">
+    <div>
+      <b-row>
+        <b-col md="12">
+          <div v-if="picLoaded" class="">
+            <b-img
+              :src="pic"
+              v-bind="mainProps"
+              fluid
+              alt="this.message"
+              width="180 px"
+              class="float-left rounded "
+            ></b-img>
+          </div>
+
+          <b-button
+            class="float-right  btn-sm"
+            variant="light"
+            @click="cancelHero()"
+          >
+            <b-icon icon="arrow-left-short" font-scale="2"></b-icon>
+          </b-button>
+
+          <b-row class="">
+            <b-col sm="12" class="pb-2">
+              Id: <code>{{ clonedHero.id }}</code>
+
+              <b-button
+                :variant="this.edit ? 'success' : 'light'"
+                class="btn ml-2"
+                @click="onEdit()"
               >
-                <b-spinner type="grow"></b-spinner>
-                <p>{{ message }}</p>
-              </div>
-              <div v-if="picLoaded">
-                <b-img :src="pic" v-bind="mainProps" thumbnail fluid alt="img" class="shadow"></b-img>
-              </div>
-            </div>
-            <h3 v-if="fullName">{{fullName}}</h3>
-            <p>
-              ( id:
-              <code>{{ clonedHero.id }}</code> )
-            </p>
-          </b-col>
-        </b-row>
+                <div v-if="!this.edit">Edit</div>
+                <div v-if="this.edit">Save</div>
+              </b-button>
 
-        <div class="pb-4">
-          <b-row class="my-1">
-            <b-col md="2">
-              <label for="name">Name:</label>
+              <b-button
+                :variant="this.details ? 'success' : 'light'"
+                class="btn ml-2"
+                @click="onDetails()"
+              >
+                <div v-if="!this.details">More details</div>
+                <div v-if="this.details">Hide details</div>
+              </b-button>
+
+              <b-button
+                v-if="this.clonedHero"
+                :variant="this.favorite.color"
+                class="btn ml-2"
+                @click="onAddToFavorites()"
+              >
+                <div v-if="!this.favorite.status">Add to favorites</div>
+                <div v-if="this.favorite.status">Added to favourites</div>
+              </b-button>
             </b-col>
-            <b-col md="10">
-              <b-form-input id="name" v-model="clonedHero.name"></b-form-input>
+            <b-col>
+              <h3 v-if="fullName">
+                {{ fullName }}
+              </h3>
+
+              <div v-if="this.edit" class="pb-3">
+                <b-row class="my-1">
+                  <b-col md="2">
+                    <label for="name">Name:</label>
+                  </b-col>
+                  <b-col md="10">
+                    <b-form-input
+                      id="name"
+                      v-model="clonedHero.name"
+                    ></b-form-input>
+                  </b-col>
+                </b-row>
+
+                <b-row>
+                  <b-col md="2">
+                    <label for="description">Full name:</label>
+                  </b-col>
+                  <b-col md="10">
+                    <b-form-input
+                      id="description"
+                      v-model="clonedHero.biography['full-name']"
+                    ></b-form-input>
+                  </b-col>
+                </b-row>
+              </div>
+
+              <h6>
+                <b>Appearance</b>:
+                <span
+                  v-for="(value, name, index) in clonedHero.appearance"
+                  v-bind:key="index + name"
+                  >{{ name }}: <b>{{ value }}</b>
+                  <span
+                    v-if="
+                      Object.keys(clonedHero.appearance).length - 1 !== index
+                    "
+                    >,
+                  </span>
+                  <span v-else>.</span>
+                </span>
+              </h6>
+              <h6>
+                <b>Powerstats</b>:
+                <span
+                  v-for="(value, name, index) in clonedHero.powerstats"
+                  v-bind:key="index + name"
+                  >{{ name }}: <b>{{ value }}</b>
+                  <span
+                    v-if="
+                      Object.keys(clonedHero.powerstats).length - 1 !== index
+                    "
+                    >,
+                  </span>
+                  <span v-else>.</span>
+                </span>
+              </h6>
             </b-col>
           </b-row>
+        </b-col>
+      </b-row>
 
-          <b-row>
-            <b-col md="2">
-              <label for="description">Description:</label>
-            </b-col>
-            <b-col md="10">
-              <b-form-input id="description" v-model="clonedHero.biography['full-name']"></b-form-input>
-            </b-col>
-          </b-row>
-        </div>
-
-      <div v-if="this.details" class="mt-4 p-0">
+      <div v-if="this.details" class="mt-3  m-0 p-0">
         <div
           v-for="(value, name, index) in clonedHero"
           v-bind:key="index + name"
@@ -59,9 +130,10 @@
               index !== 0 &&
                 name !== 'name' &&
                 name !== 'id' &&
-                name !== 'image'
+                name !== 'image' &&
+                name !== 'liked'
             "
-            class="m-1 border"
+            class="mt-4"
           >
             <b-col sm="2">
               <b>{{ name }}:</b>
@@ -71,7 +143,7 @@
               <b-row
                 v-for="(value, name, index) in value"
                 v-bind:key="index + name"
-                class="border-left"
+                class="mb-2 border-bottom mr-1"
               >
                 <b-col md="3">
                   <b>{{ name }}:</b>
@@ -82,7 +154,7 @@
                     v-if="
                       typeof value === 'string' || typeof value === 'number'
                     "
-                    class="border-left pl-3 row"
+                    class="pl-3 mr-1 row"
                   >
                     {{ value }}
                   </div>
@@ -91,7 +163,7 @@
                     <b-row
                       v-for="(value, name, index) in value"
                       v-bind:key="index + value"
-                      class="border-left pl-3"
+                      class=" pl-3 mr-1"
                     >
                       <span v-if="typeof value === 'string'">
                         {{ value }}
@@ -105,16 +177,18 @@
         </div>
       </div>
 
-        <div class="float-right mt-4">
-          <b-button class="mr-2 border" variant="light" @click="cancelHero()">Cancel</b-button>
-          <b-button class="border" variant="light" @click="saveHero()">Save</b-button>
-        </div>
-      </b-col>
-    </b-row>
+      <div class="float-right mt-4">
+        <b-button class="mr-2" variant="light" @click="cancelHero()"
+          >Cancel</b-button
+        >
+        <b-button class="" variant="light" @click="saveHero()">Submit</b-button>
+      </div>
+    </div>
   </b-card>
 </template>
 
 <script>
+import store from '@/store/index'
 export default {
   name: 'HeroDetail',
   props: {
@@ -130,6 +204,12 @@ export default {
   data() {
     return {
       clonedHero: {},
+      favorite: {
+        status: false,
+        color: undefined
+      },
+      edit: false,
+      details: false,
       message: '',
       picLoaded: undefined,
       pic: '',
@@ -156,7 +236,9 @@ export default {
   methods: {
     async cloneHero() {
       this.clonedHero = { ...this.hero }
-      console.log('cloneHero -> this.hero', this.hero)
+      this.favorite.status = this.clonedHero.liked
+      if (this.clonedHero.liked) this.favorite.color = 'success'
+      else this.favorite.color = 'light'
     },
     async loadPicture() {
       this.message = 'Loading photo...'
@@ -165,6 +247,22 @@ export default {
         this.picLoaded = true
         this.message = ''
       } else this.message = 'Picture unavailable ;-)'
+    },
+    onAddToFavorites() {
+      this.favorite.status = !this.favorite.status
+      if (this.favorite.status) this.favorite.color = 'success'
+      else this.favorite.color = 'light'
+      store.dispatch('addFavoriteHero', {
+        ...this.clonedHero
+        // id: this.clonedHero.id,
+        // name: this.clonedHero.name
+      })
+    },
+    onEdit() {
+      this.edit = !this.edit
+    },
+    onDetails() {
+      this.details = !this.details
     },
     cancelHero() {
       this.$emit('cancel')

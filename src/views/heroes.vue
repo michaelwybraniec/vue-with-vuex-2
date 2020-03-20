@@ -1,5 +1,5 @@
 <template>
-  <b-container class="p-2 mt-4">
+  <b-container>
     <b-card-group deck class>
       <b-card class="shadow" header="Heroes">
         <b-row>
@@ -8,7 +8,9 @@
               <div>
                 <b-row class="mb-2">
                   <b-col sm="6" class="pr-2">
-                    <label class="sr-only" for="inline-form-input-name">Search:</label>
+                    <label class="sr-only" for="inline-form-input-name"
+                      >Search:</label
+                    >
                     <b-input
                       id="inline-form-input-name"
                       class="mb-20"
@@ -19,8 +21,6 @@
                   </b-col>
 
                   <b-col sm="6" class="pl-2">
-                    <!-- <div> -->
-
                     <span v-if="!this.message.error">
                       <b-button
                         variant="light"
@@ -38,13 +38,18 @@
 
                     <span
                       v-if="
-                          buttons.clear.show &&
-                            !this.message.error &&
-                            !this.loading &&
-                            search.input
-                        "
+                        buttons.clear.show &&
+                          !this.message.error &&
+                          !this.loading &&
+                          search.input
+                      "
                     >
-                      <b-button variant="light" @click="clearHero()" class="ml-2 border">Clear</b-button>
+                      <b-button
+                        variant="light"
+                        @click="clearHero()"
+                        class="ml-2 border"
+                        >Clear</b-button
+                      >
                     </span>
 
                     <div v-if="this.message.error">
@@ -53,10 +58,9 @@
                         variant="danger"
                         style="padding: 6px; margin: 0px;"
                         class="text-center"
-                      >{{ this.message.error }}</b-alert>
+                        >{{ this.message.error }}</b-alert
+                      >
                     </div>
-
-                    <!-- </div> -->
                   </b-col>
                 </b-row>
               </div>
@@ -66,18 +70,27 @@
               <b-list-group v-if="!selectedHero">
                 <div v-if="hero.response !== 'success'">
                   <div v-for="(value, index) in hero" v-bind:key="index">
-                    <b-list-group-item button class="mb-2" @click="selectHero(hero[index])">
-                      <!-- {{hero[index]}} -->
-                      <b class>{{value.name}}</b>
+                    <b-list-group-item
+                      :variant="hero[index].liked && 'success'"
+                      button
+                      class="mb-2"
+                      @click="selectHero(hero[index])"
+                    >
+                      <b class>{{ value.name }}</b>
+                      <!-- <span v-if="hero[index].liked">
+                        Liked: {{ hero[index].liked }}
+                      </span> -->
                     </b-list-group-item>
                   </div>
                 </div>
                 <div v-else>
                   <b-list-group-item
+                    :variant="hero.liked && 'success'"
                     button
                     class="shadow-sm mt-1"
                     @click="selectHero(hero)"
-                  >{{ hero.name }}</b-list-group-item>
+                    >{{ hero.name }}</b-list-group-item
+                  >
                 </div>
               </b-list-group>
 
@@ -119,6 +132,10 @@ export default {
       },
       search: {
         input: undefined
+      },
+      favorites: {
+        data: [],
+        length: 0
       }
     }
   },
@@ -126,17 +143,11 @@ export default {
     HeroDetail
   },
   watch: {
-    // disableSearch() {
-    //   if (this.search.input === '') {
-    //     this.buttons.search.disabled = true
-    //     this.buttons.clear.show = false
-    //     this.message.error = undefined
-    //   } else {
-    //     this.buttons.search.disabled = false
-    //   }
-    // },
-    apiError(errNew, errOld) {
-      console.log('apiError -> errNew, errOld', errNew, errOld)
+    favoriteHeroes(newFav) {
+      this.favorites.data = newFav
+      this.favorites.length = newFav.length
+    },
+    apiError(errNew) {
       switch (errNew) {
         case 'access denied':
           this.message.error = 'Api access denied, try later pls !'
@@ -151,9 +162,9 @@ export default {
     }
   },
   computed: {
-    // disableSearch() {
-    //   return this.search.input
-    // },
+    favoriteHeroes() {
+      return store.getters.getFavoriteHeroes
+    },
     hero() {
       return store.getters.getAvailableHero
     },
@@ -186,7 +197,9 @@ export default {
       this.selectedHero = undefined
     },
     selectHero(selectedHero) {
-      console.log('selectHero -> hero', selectedHero.name)
+      const likedHero = this.favorites.data.find(h => h.id === selectedHero.id)
+      if (likedHero) selectedHero.liked = true
+      else selectedHero.liked = false
       this.selectedHero = selectedHero
     },
     cancelHero() {
