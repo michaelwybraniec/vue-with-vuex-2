@@ -18,13 +18,21 @@ export default new Router({
       component: () =>
         import(/* webpackChunkName: "bundle.heroes" */ "./views/heroes.vue")
     },
-    // {
-    //   path: "/hero/:id",
-    //   name: "hero-detail",
-    //   // props: true,
-    //   // props: parseProps,
-    //   component: () =>
-    //     import(/* webpackChunkName: "bundle.heroes" */ "./views/hero-detail.vue")
-    // },
+    {
+      path: "/hero/:id",
+      name: "hero-detail",
+      props: true,
+      //  props: parseProps,
+      component: () =>
+        import(/* webpackChunkName: "bundle.heroes" */ "./views/hero-detail.vue")
+    },
+    {
+      path: "/favorite-heroes",
+      name: "favoriteHeroes",
+      props: true,
+      // props: parseProps,
+      component: () =>
+        import(/* webpackChunkName: "bundle.heroes" */ "./views/favorite-heroes.vue")
+    },
   ]
 });
